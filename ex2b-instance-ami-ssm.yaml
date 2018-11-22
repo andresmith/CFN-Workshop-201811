@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: EC2 Instance with Dynamic AMI
+
+Parameters:
+  Subnet:
+    Type: AWS::EC2::Subnet::Id
+  MyVpc:
+    Type: AWS::EC2::VPC::Id
+  LatestAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn-ami-hvm-x86_64-gp2
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+      SecurityGroupIds: 
+        - !GetAtt MySecurityGroup.GroupId
+      SubnetId: !Ref Subnet
+
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: My Security Group
+      VpcId: !Ref MyVpc
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0

@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Basic EC2 Template
+
+Parameters:
+  Subnet:
+    Type: AWS::EC2::Subnet::Id
+  MyVpc:
+    Type: AWS::EC2::VPC::Id
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-09693313102a30b2c
+      SecurityGroupIds: 
+        - !GetAtt MySecurityGroup.GroupId
+      SubnetId: !Ref Subnet
+
+  MySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: My Security Group
+      VpcId: !Ref MyVpc
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
